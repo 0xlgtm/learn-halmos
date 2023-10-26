@@ -1,66 +1,50 @@
-## Foundry
+## Learn Halmos
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+### Prerequisites
 
-Foundry consists of:
+- Python3
+- Foundry
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+### Getting started
 
-## Documentation
+1. Clone the repo
 
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```bash
+$ git clone https://github.com/0xlgtm/learn-halmos.git
 ```
 
-### Test
+2. Navigate to the folder
 
-```shell
-$ forge test
+```bash
+$ cd learn-halmos
 ```
 
-### Format
+3. Create a new virtual env (optional)
 
-```shell
-$ forge fmt
+```bash
+$  python3 -m venv venv
 ```
 
-### Gas Snapshots
+4. Activate virtual env (optional, ignore if you skipped step 3)
 
-```shell
-$ forge snapshot
+```bash
+$ source venv/bin/activate
 ```
 
-### Anvil
+5. Install halmos
 
-```shell
-$ anvil
+```bash
+$ pip install halmos
 ```
 
-### Deploy
+6. Install foundry dependencies
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+```bash
+$ forge install
 ```
 
-### Cast
+7. Execute Halmos command
 
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+```bash
+$ halmos --storage-layout=generic
 ```
