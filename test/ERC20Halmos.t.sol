@@ -24,11 +24,14 @@ contract HalmosToken is ERC20, Ownable {
         _mint(_to, _amount);
     }
 
-    function steal(address _from) public {
-        _transfer(_from, msg.sender, balanceOf(_from));
-    }
+    // If you want to test that the check_noBackdoor() test works, uncomment this
+    // function and the stuff in setUp()
+    // function steal(address _from) public {
+    //     _transfer(_from, msg.sender, balanceOf(_from));
+    // }
 }
 
+// $ halmos --storage-layout=generic
 contract HalmosTokenTest is SymTest, Test {
     HalmosToken token;
     address owner;
@@ -39,6 +42,7 @@ contract HalmosTokenTest is SymTest, Test {
         // Specify input conditions
         owner = svm.createAddress("owner");
         caller = svm.createAddress("caller");
+        // other = 0x1234567890123456789012345678901234567899;
         other = svm.createAddress("other");
 
         uint256 callerBalance = svm.createUint256("callerBalance");
@@ -106,14 +110,20 @@ contract HalmosTokenTest is SymTest, Test {
         assertGe(callerAllowanceBefore, otherBalanceBefore - otherBalanceAfter);
     }
 
-    // This test checks that the only way for a receiver's balance
-    // to increase is by decreasing the allowance.
-    function check_NoBackdoor(bytes4 selector, bytes memory args) public virtual {
+    // Note regarding args
+    // Bigger is better but it makes the algorithm slower since there are more combinations.
+    // Excess data in calldata will be ignored. If calldata is too short, all 0s will be used.
+    // e.g. if you use svm.createBytes(less than 20, 'data'), this function can never fail because address is at least 20 bytes.
+    // I guess ideally use the size of the longest possible calldata.
+
+    function check_NoBackdoor(bytes4 selector) public virtual {
         // Specify input conditions
+
+        bytes memory args = svm.createBytes(64, 'data'); 
         uint256 callerAllowanceBefore = token.allowance(other, caller);
         uint256 otherBalanceBefore = token.balanceOf(other);
 
-        // consider an arbitrary function call to the token from the caller
+        // Call target contract
         vm.prank(caller);
         (bool success,) = address(token).call(abi.encodePacked(selector, args));
         vm.assume(success);
@@ -122,7 +132,7 @@ contract HalmosTokenTest is SymTest, Test {
         uint256 callerAllowanceAfter = token.allowance(other, caller);
         uint256 otherBalanceAfter = token.balanceOf(other);
 
-        // ensure that the caller cannot spend other' tokens without approvals
+        // The only way someone's balance can decrease is through transferFrom.
         if (otherBalanceAfter < otherBalanceBefore) {
             assertEq(callerAllowanceBefore, callerAllowanceAfter + (otherBalanceBefore - otherBalanceAfter));
         }
