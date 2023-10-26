@@ -32,12 +32,10 @@ contract HalmosTokenTest is SymTest, Test {
     address owner = address(uint160(uint256(me)));
 
     function setUp() public {
-        token = new HalmosToken();
         vm.startPrank(owner);
+
+        token = new HalmosToken();
         token.initialize();
-        // uint256 initialSupply = svm.createUint256("initialSupply");
-        // vm.assume(initialSupply < 10);
-        // token.mint(owner, initialSupply);
     }
 
     function check_transfer() public {
@@ -56,11 +54,10 @@ contract HalmosTokenTest is SymTest, Test {
         
         // Call target contract
         vm.startPrank(owner);
-        // token.transfer(sender, senderBalance);
-        // token.transfer(receiver, receiverBalance);
         token.mint(sender, senderBalance);
         token.mint(receiver, receiverBalance);
         vm.stopPrank();
+
         vm.prank(sender);
         token.transfer(receiver, amount);
 
@@ -89,13 +86,13 @@ contract HalmosTokenTest is SymTest, Test {
         
         // Call target contract
         vm.startPrank(owner);
-        // token.transfer(sender, senderBalance);
-        // token.transfer(receiver, receiverBalance);
         token.mint(sender, senderBalance);
         token.mint(receiver, receiverBalance);
         vm.stopPrank();
+
         vm.prank(sender);
         token.approve(receiver, receiverAllowance);
+
         vm.prank(receiver);
         token.transferFrom(sender, receiver, amount);
 
